@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Your Gift!</title>
+    <style>
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(120deg, #ff9a9e 0%, #fecfef 30%, #f6e58d 70%, #ffc3a0 100%); background-size: 200% 200%; animation: partyGradient 6s ease infinite; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; touch-action: none; }
+        @keyframes partyGradient { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        .header-text { font-size: 32px; font-weight: bold; color: #d63031; margin-bottom: 50px; text-shadow: 2px 2px 0px rgba(255,255,255,0.7); z-index: 10; text-align: center; transition: opacity 0.4s ease-out; }
+        .gift-box-container { width: 200px; height: 200px; perspective: 600px; cursor: pointer; z-index: 5; -webkit-tap-highlight-color: transparent; }
+        .gift-box { --gift-box-color: #e63946; --gift-box-edge-color: #590b11; --wrap-color: #f1faee; --wrap-ribbon-color: #c0e4e6; --wrap-top-color: #d8efef; width: 200px; height: 200px; position: relative; transform-style: preserve-3d; animation: rotation-3d 20s infinite linear; transition: transform 0.8s ease-out, opacity 0.8s ease-out; }
+        .gift-box .gift-box__side, .gift-box .gift-box__end { position: absolute; width: 200px; height: 200px; border: 2px solid var(--gift-box-edge-color); box-sizing: border-box; transition: transform 1s ease-out, opacity 0.8s; }
+        .gift-box .gift-box-lid__side { position: absolute; width: 220px; height: 50px; border: 2px solid var(--gift-box-edge-color); box-sizing: border-box; }
+        .gift-box .gift-box-lid__end { position: absolute; width: 220px; height: 220px; border: 2px solid var(--gift-box-edge-color); box-sizing: border-box; }
+        .gift-box .gift-box__side, .gift-box .gift-box-lid__side { background: linear-gradient(to right, var(--gift-box-color) 40%, var(--wrap-color) 40%, var(--wrap-color) 60%, var(--gift-box-color) 60%); }
+        .gift-box .gift-box__end, .gift-box .gift-box-lid__end { background: linear-gradient(to right, transparent 40%, var(--wrap-top-color) 40%, var(--wrap-top-color) 60%, transparent 60%), linear-gradient(to bottom, var(--gift-box-color) 40%, var(--wrap-color) 40%, var(--wrap-color) 60%, var(--gift-box-color) 60%); }
+        .gift-box .gift-box__side--front { transform: rotateY(0deg) translateZ(100px); } .gift-box .gift-box__side--back { transform: rotateY(180deg) translateZ(100px); } .gift-box .gift-box__side--left { transform: rotateY(-90deg) translateZ(100px); } .gift-box .gift-box__side--right { transform: rotateY(90deg) translateZ(100px); } .gift-box .gift-box__side--top { transform: rotateX(90deg) translateZ(100px); } .gift-box .gift-box__side--bottom { transform: rotateX(-90deg) translateZ(100px); }
+        .lid-group { position: absolute; width: 100%; height: 100%; transform-style: preserve-3d; transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.8s; }
+        .gift-box .gift-box-lid__side--front { transform: rotateY(0deg) translateZ(110px) translateX(-10px) translateY(-10px); } .gift-box .gift-box-lid__side--back { transform: rotateY(180deg) translateZ(110px) translateX(10px) translateY(-10px); } .gift-box .gift-box-lid__side--left { transform: rotateY(-90deg) translateZ(120px)  translateY(-10px); } .gift-box .gift-box-lid__side--right { transform: rotateY(90deg) translateZ(100px)  translateY(-10px); } .gift-box .gift-box-lid__side--top { transform: rotateX(90deg) translateZ(120px) translateX(-10px) translateY(0); }
+        .gift-box .ribbon-l { position: absolute; width: 70px; height: 70px; border: 2px solid var(--wrap-ribbon-color); border-radius: 50% 50% 0 50%; transform-style: preserve-3d; transform-origin: 50% 50%; transform: rotateX(75deg) rotateY(90deg) translateZ(calc(80px - var(--gift-box-position))) translateX(-85px) translateY(-75px) skewY(30deg); }
+        .gift-box .ribbon-r { position: absolute; width: 70px; height: 70px; border: 2px solid var(--wrap-ribbon-color); border-radius: 50% 50% 0 50%; transform-style: preserve-3d; transform-origin: 50% 50%; transform: rotateX(-5deg) rotateY(90deg) translateZ(calc(80px - var(--gift-box-position))) translateX(-30px) translateY(-110px) skewY(30deg); }
+        .ribbon-l-end { position: absolute; width: 40px; height: 110px; background: linear-gradient(45deg, var(--wrap-top-color) 72%, transparent 72%), linear-gradient(-45deg, var(--wrap-top-color) 72%, transparent 72%); border: 2px solid var(--gift-box-edge-color); border-top: none; border-bottom: none; transform: rotateX(-70deg) translateX(80px) translateY(-80px) translateZ(-60px); }
+        .ribbon-r-end { position: absolute; width: 40px; height: 110px; background: linear-gradient(45deg, var(--wrap-top-color) 72%, transparent 72%), linear-gradient(-45deg, var(--wrap-top-color) 72%, transparent 72%); border: 2px solid var(--gift-box-edge-color); border-top: none; border-bottom: none; transform: rotateX(80deg) translateX(80px) translateY(-80px) translateZ(60px); }
+        @keyframes rotation-3d { from { transform: translateZ(-100px) rotateY(50deg) rotateX(-5deg) rotateZ(-30deg); } to { transform: translateZ(-100px) rotateY(409deg) rotateX(-5deg) rotateZ(-30deg); } }
+        .gift-box.opening { animation: none;  transform: scale(0.7) rotateY(200deg) rotateX(35deg) translateY(150px); opacity: 0; transition: transform 1.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 1.2s ease-in; }
+        .gift-box.opening .lid-group { transform: translateY(-450px) rotateX(45deg) scale(0.4); opacity: 0; transition: transform 1.2s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.8s; }
+        .gift-box.opening .gift-box__side--front { transform: rotateX(-90deg) translateZ(100px); } .gift-box.opening .gift-box__side--back { transform: rotateX(90deg) translateZ(100px); } .gift-box.opening .gift-box__side--left { transform: rotateY(-180deg) translateZ(100px); } .gift-box.opening .gift-box__side--right { transform: rotateY(180deg) translateZ(100px); }
+        #flash { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 100; opacity: 0; pointer-events: none; transition: opacity 0.8s ease-in; }
+    </style>
+</head>
+<body>
+
+    <div id="flash"></div>
+    <div class="header-text" id="headerText">Well here's the gift</div>
+
+    <div class="gift-box-container" onclick="openGift()">
+        <div class="gift-box" id="myGiftBox">
+            
+            <div class="gift-box__side gift-box__side--front"></div>
+            <div class="gift-box__side gift-box__side--back"></div>
+            <div class="gift-box__side gift-box__side--left"></div>
+            <div class="gift-box__side gift-box__side--right"></div>
+            <div class="gift-box__end gift-box__side--bottom"></div>
+            
+            <div class="lid-group" id="lidGroup">
+                <div class="gift-box-lid__side gift-box-lid__side--front"></div>
+                <div class="gift-box-lid__side gift-box-lid__side--back"></div>
+                <div class="gift-box-lid__side gift-box-lid__side--left"></div>
+                <div class="gift-box-lid__side gift-box-lid__side--right"></div>
+                <div class="gift-box-lid__end gift-box-lid__side--top"></div>
+                
+                <div class="ribbon-l-end"></div>
+                <div class="ribbon-r-end"></div>
+            </div>
+
+        </div>
+    </div>
+
+<script>
+    const lidGroup = document.getElementById('lidGroup');
+    
+    for (let i = 0; i <= 40; i++) { const ribbonL = document.createElement('div'); ribbonL.classList.add('ribbon-l'); ribbonL.style.setProperty('--gift-box-position', `${i}px`); ribbonL.style.borderColor = (i < 3 || i > 37) ? 'var(--gift-box-edge-color)' : 'var(--wrap-ribbon-color)'; lidGroup.appendChild(ribbonL); }
+    for (let i = 0; i <= 40; i++) { const ribbonR = document.createElement('div'); ribbonR.classList.add('ribbon-r'); ribbonR.style.setProperty('--gift-box-position', `${i}px`); ribbonR.style.borderColor = (i < 3 || i > 37) ? 'var(--gift-box-edge-color)' : 'var(--wrap-ribbon-color)'; lidGroup.appendChild(ribbonR); }
+
+    let clicked = false;
+
+    function openGift() {
+        if (clicked) return; 
+        clicked = true;
+
+        const box = document.getElementById('myGiftBox');
+        const text = document.getElementById('headerText');
+        const flash = document.getElementById('flash');
+
+        box.classList.add('opening');
+        text.style.opacity = '0';
+
+        setTimeout(() => { flash.style.opacity = '1'; }, 900);
+        
+        // PERFECTLY CONNECTED TO PAGE 4 HERE
+        setTimeout(() => { window.location.href = "page4.html"; }, 1700);
+    }
+</script>
+
+</body>
+</html>

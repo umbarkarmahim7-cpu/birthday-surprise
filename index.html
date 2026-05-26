@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guess Who?</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap');
+
+        body, html {
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            font-family: 'Quicksand', 'Segoe UI', sans-serif;
+            background: radial-gradient(ellipse at bottom, #1a1040 0%, #0d0820 50%, #050310 100%);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            min-height: 100vh;
+        }
+
+        /* ---- STARS ---- */
+        #stars-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; }
+        .star {
+            position: absolute; background: #fff; border-radius: 50%;
+            animation: twinkle infinite alternate;
+        }
+        @keyframes twinkle {
+            0% { opacity: 0.2; transform: scale(0.85); }
+            100% { opacity: 0.85; transform: scale(1.15); }
+        }
+
+        /* ---- MOON ---- */
+        .moon-container { position: absolute; top: 10%; right: 12%; z-index: 1; }
+        .moon {
+            width: 80px; height: 80px;
+            background: radial-gradient(circle at 30% 30%, #fffff0, #f7f7d8 60%, #d4d4a0);
+            border-radius: 50%;
+            box-shadow: 0 0 30px 8px rgba(255,255,220,0.35), 0 0 80px 20px rgba(255,255,200,0.15), inset -8px -8px 14px rgba(0,0,0,0.15);
+            animation: moonGlow 10s infinite alternate;
+        }
+        @keyframes moonGlow {
+            0% { box-shadow: 0 0 25px 5px rgba(255,255,220,0.3), 0 0 70px 15px rgba(255,255,200,0.12), inset -8px -8px 14px rgba(0,0,0,0.15); }
+            100% { box-shadow: 0 0 40px 12px rgba(255,255,220,0.5), 0 0 100px 30px rgba(255,255,200,0.2), inset -8px -8px 14px rgba(0,0,0,0.15); }
+        }
+
+        /* ---- SHOOTING STARS ---- */
+        .night { position: absolute; width: 100%; height: 100%; transform: rotateZ(45deg); z-index: 2; pointer-events: none; }
+        .shooting_star {
+            position: absolute; left: 50%; top: 50%; height: 2px;
+            background: linear-gradient(-45deg, rgba(255,220,255,1), rgba(180,120,255,0));
+            border-radius: 999px;
+            filter: drop-shadow(0 0 5px rgba(220,180,255,1));
+            animation: tail 7000ms ease-in-out infinite, shooting 7000ms ease-in-out infinite;
+        }
+        .shooting_star::before, .shooting_star::after {
+            content: ''; position: absolute; top: calc(50% - 1px); right: 0; height: 2px;
+            background: linear-gradient(-45deg, rgba(255,220,255,0), rgba(255,220,255,1), rgba(255,220,255,0));
+            border-radius: 100%;
+            animation: shining 4000ms ease-in-out infinite;
+        }
+        .shooting_star::before { transform: translateX(50%) rotateZ(45deg); }
+        .shooting_star::after { transform: translateX(50%) rotateZ(-45deg); }
+        .shooting_star:nth-child(1) { top: 5%; left: 10%; animation-delay: 0s; }
+        .shooting_star:nth-child(2) { top: 20%; left: -20%; animation-delay: 3s; }
+        .shooting_star:nth-child(3) { top: -10%; left: 30%; animation-delay: 6s; }
+        @keyframes tail { 0% { width: 0; } 30% { width: 130px; } 100% { width: 0; } }
+        @keyframes shining { 0% { width: 0; } 50% { width: 30px; } 100% { width: 0; } }
+        @keyframes shooting { 0% { transform: translateX(0); } 100% { transform: translateX(500px); } }
+
+        /* ---- FLOATING PARTICLES ---- */
+        #particles-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; overflow: hidden; }
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            animation: floatUp linear infinite;
+            opacity: 0;
+        }
+        @keyframes floatUp {
+            0% { transform: translateY(100vh) scale(0); opacity: 0; }
+            10% { opacity: 0.8; }
+            90% { opacity: 0.6; }
+            100% { transform: translateY(-10vh) scale(1.2); opacity: 0; }
+        }
+
+        /* ---- BUTTERFLY ANIMATIONS ---- */
+        @keyframes wingBeat { 0%{transform:scaleY(1)} 100%{transform:scaleY(0.3)} }
+        .bfly { animation: flyAcross linear infinite; }
+        @keyframes flyAcross {
+            0% { transform: translate(-80px, 0px); }
+            100% { transform: translate(calc(100vw + 80px), -80px); }
+        }
+        .bfly2 { animation: flyAcross2 linear infinite; }
+        @keyframes flyAcross2 {
+            0% { transform: translate(-80px, 0px); }
+            100% { transform: translate(calc(100vw + 80px), 60px); }
+        }
+
+        /* ---- AURORA GLOW ---- */
+        .aurora {
+            position: absolute; bottom: 0; left: 0; width: 100%; height: 35%;
+            background: linear-gradient(to top, rgba(120,60,180,0.12) 0%, rgba(80,180,160,0.07) 50%, transparent 100%);
+            animation: auroraShift 16s ease-in-out infinite alternate;
+            z-index: 0; pointer-events: none;
+        }
+        @keyframes auroraShift {
+            0% { background: linear-gradient(to top, rgba(120,60,180,0.12) 0%, rgba(80,180,160,0.07) 50%, transparent 100%); opacity: 0.7; }
+            50% { background: linear-gradient(to top, rgba(80,180,160,0.12) 0%, rgba(180,80,160,0.07) 50%, transparent 100%); opacity: 1; }
+            100% { background: linear-gradient(to top, rgba(160,80,200,0.12) 0%, rgba(80,160,200,0.07) 50%, transparent 100%); opacity: 0.8; }
+        }
+
+        /* ---- SPARKLE BURSTS ---- */
+        .sparkle-burst {
+            position: absolute; pointer-events: none; z-index: 20;
+            animation: burstOut 0.8s ease-out forwards;
+            font-size: 22px;
+        }
+        @keyframes burstOut {
+            0% { transform: scale(0) rotate(0deg); opacity: 1; }
+            60% { transform: scale(1.4) rotate(20deg); opacity: 1; }
+            100% { transform: scale(0.8) rotate(30deg) translateY(-30px); opacity: 0; }
+        }
+
+        /* ---- CARD ---- */
+        .container {
+            position: relative; z-index: 10;
+            background: rgba(20, 10, 40, 0.45);
+            backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+            border: 1px solid rgba(200, 160, 255, 0.25);
+            border-radius: 28px;
+            padding: 48px 38px;
+            text-align: center;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.55), inset 0 0 30px rgba(160,100,255,0.06), 0 0 0 1px rgba(255,255,255,0.04);
+            max-width: 390px; width: 88%;
+            animation: cardEntrance 1s cubic-bezier(0.22,1,0.36,1) both;
+        }
+        @keyframes cardEntrance {
+            from { opacity: 0; transform: translateY(30px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .container::before {
+            content: '';
+            position: absolute; inset: -1px; border-radius: 29px;
+            background: linear-gradient(135deg, rgba(220,160,255,0.35), rgba(120,200,255,0.15), rgba(255,160,200,0.25));
+            z-index: -1;
+            animation: borderGlow 8s ease-in-out infinite alternate;
+        }
+        @keyframes borderGlow {
+            0% { opacity: 0.4; }
+            100% { opacity: 1; }
+        }
+
+        h1 {
+            font-size: 26px; margin-top: 0; margin-bottom: 8px;
+            font-weight: 700; letter-spacing: 0.5px;
+            text-shadow: 0 2px 12px rgba(200,140,255,0.6);
+            animation: titleFloat 6s ease-in-out infinite alternate;
+        }
+        @keyframes titleFloat {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-4px); }
+        }
+
+        p.hint {
+            font-size: 48px; margin: 10px 0 28px;
+            animation: hintBounce 4s ease-in-out infinite alternate;
+            display: block;
+        }
+        @keyframes hintBounce {
+            0% { transform: translateY(0) rotate(-5deg) scale(1); }
+            100% { transform: translateY(-8px) rotate(5deg) scale(1.1); }
+        }
+
+        .input-group { display: flex; flex-direction: column; gap: 18px; align-items: center; }
+
+        input[type="text"] {
+            width: 83%; padding: 14px 20px;
+            border-radius: 30px; border: 1px solid rgba(200,160,255,0.3); outline: none;
+            font-size: 16px; text-align: center;
+            background: rgba(255,255,255,0.92);
+            color: #1a0d30; box-shadow: inset 0 2px 6px rgba(0,0,0,0.15);
+            font-weight: 700; font-family: 'Quicksand', sans-serif;
+            transition: box-shadow 0.3s, transform 0.3s;
+        }
+        input[type="text"]:focus {
+            box-shadow: inset 0 2px 6px rgba(0,0,0,0.15), 0 0 0 3px rgba(200,140,255,0.4), 0 0 20px rgba(200,140,255,0.25);
+            transform: scale(1.02);
+        }
+
+        button {
+            padding: 14px 42px; border: none; border-radius: 30px;
+            background: linear-gradient(135deg, #c084fc, #a855f7, #e879f9);
+            color: white;
+            font-size: 17px; font-weight: 700; cursor: pointer;
+            font-family: 'Quicksand', sans-serif;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 6px 22px rgba(168,85,247,0.55);
+            letter-spacing: 0.5px;
+            position: relative; overflow: hidden;
+        }
+        button::after {
+            content: '';
+            position: absolute; inset: 0; border-radius: 30px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.2), transparent);
+            pointer-events: none;
+        }
+        button:hover { transform: translateY(-3px) scale(1.04); box-shadow: 0 10px 30px rgba(168,85,247,0.7); }
+        button:active { transform: translateY(0) scale(0.98); }
+
+        #error-msg {
+            color: #f0abfc; margin-top: 18px;
+            font-size: 15px; font-weight: 700;
+            opacity: 0; transition: opacity 0.3s;
+            min-height: 22px; text-shadow: 0 1px 6px rgba(0,0,0,0.6);
+        }
+
+        /* ---- FLOWER DECORATIONS ---- */
+        .flower {
+            position: absolute; font-size: 20px; pointer-events: none; z-index: 4;
+            animation: flowerFloat ease-in-out infinite alternate;
+        }
+        @keyframes flowerFloat {
+            0% { transform: translateY(0) rotate(0deg); opacity: 0.7; }
+            100% { transform: translateY(-12px) rotate(15deg); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="stars-container"></div>
+    <div id="particles-container"></div>
+    <div class="aurora"></div>
+
+    <div class="moon-container">
+        <div class="moon"></div>
+    </div>
+
+    <div class="night">
+        <div class="shooting_star"></div>
+        <div class="shooting_star"></div>
+        <div class="shooting_star"></div>
+    </div>
+
+    <!-- Butterflies -->
+    <svg xmlns="http://www.w3.org/2000/svg" style="position:absolute;top:0;left:0;width:100%;height:100%;z-index:3;pointer-events:none;">
+        <g class="bfly" style="animation-duration:18s;animation-delay:2s">
+            <g style="transform:translate(0,20vh)">
+                <ellipse cx="-14" cy="0" rx="13" ry="7" fill="rgba(220,140,255,0.55)" style="transform-origin:-14px 0;animation:wingBeat 0.8s ease-in-out infinite alternate"/>
+                <ellipse cx="14" cy="0" rx="13" ry="7" fill="rgba(220,140,255,0.55)" style="transform-origin:14px 0;animation:wingBeat 0.8s ease-in-out infinite alternate"/>
+                <ellipse cx="-10" cy="3" rx="7" ry="5" fill="rgba(255,180,240,0.45)" style="transform-origin:-10px 3px;animation:wingBeat 0.8s ease-in-out infinite alternate"/>
+                <ellipse cx="10" cy="3" rx="7" ry="5" fill="rgba(255,180,240,0.45)" style="transform-origin:10px 3px;animation:wingBeat 0.8s ease-in-out infinite alternate"/>
+                <ellipse cx="0" cy="0" rx="2.5" ry="8" fill="rgba(240,200,255,0.7)"/>
+            </g>
+        </g>
+        <g class="bfly2" style="animation-duration:24s;animation-delay:8s">
+            <g style="transform:translate(0,55vh)">
+                <ellipse cx="-12" cy="0" rx="10" ry="6" fill="rgba(140,200,255,0.5)" style="transform-origin:-12px 0;animation:wingBeat 0.7s ease-in-out infinite alternate"/>
+                <ellipse cx="12" cy="0" rx="10" ry="6" fill="rgba(140,200,255,0.5)" style="transform-origin:12px 0;animation:wingBeat 0.7s ease-in-out infinite alternate"/>
+                <ellipse cx="-8" cy="3" rx="6" ry="4" fill="rgba(180,230,255,0.4)" style="transform-origin:-8px 3px;animation:wingBeat 0.7s ease-in-out infinite alternate"/>
+                <ellipse cx="8" cy="3" rx="6" ry="4" fill="rgba(180,230,255,0.4)" style="transform-origin:8px 3px;animation:wingBeat 0.7s ease-in-out infinite alternate"/>
+                <ellipse cx="0" cy="0" rx="2" ry="7" fill="rgba(200,230,255,0.7)"/>
+            </g>
+        </g>
+    </svg>
+
+    <!-- Floating flowers around card area -->
+    <div class="flower" style="top:22%;left:8%;animation-duration:6s;animation-delay:0s;">🌸</div>
+    <div class="flower" style="top:65%;left:6%;animation-duration:5.5s;animation-delay:0.5s;">🌺</div>
+    <div class="flower" style="top:18%;right:8%;animation-duration:7s;animation-delay:1s;">✨</div>
+    <div class="flower" style="top:72%;right:7%;animation-duration:5s;animation-delay:0.3s;">🌸</div>
+    <div class="flower" style="top:85%;left:20%;animation-duration:7.5s;animation-delay:0.8s;">🌷</div>
+    <div class="flower" style="top:80%;right:22%;animation-duration:6s;animation-delay:1.5s;">💫</div>
+    <div class="flower" style="top:35%;left:3%;animation-duration:8s;animation-delay:0.2s;">🌼</div>
+    <div class="flower" style="top:45%;right:4%;animation-duration:6.5s;animation-delay:1.2s;">🌷</div>
+
+    <div class="container">
+        <h1>Guess whose birthday is today? 🎂</h1>
+        <p class="hint"><span style="font-size:18px;opacity:0.75;font-weight:600;vertical-align:middle;">Hint:</span> 🐰</p>
+        <div class="input-group">
+            <input type="text" id="answer" placeholder="Type your answer here..." autocomplete="off">
+            <button onclick="checkAnswer()">Submit ➡️</button>
+        </div>
+        <p id="error-msg">Nope! Try again!</p>
+    </div>
+
+    <script>
+        // Stars
+        const starsContainer = document.getElementById('stars-container');
+        for(let i = 0; i < 80; i++) {
+            let star = document.createElement('div');
+            star.classList.add('star');
+            star.style.left = Math.random() * 100 + 'vw';
+            star.style.top = Math.random() * 100 + 'vh';
+            let size = Math.random() * 2.5 + 0.4;
+            star.style.width = size + 'px';
+            star.style.height = size + 'px';
+            star.style.animationDuration = (Math.random() * 4 + 3) + 's';
+            star.style.animationDelay = (Math.random() * 3) + 's';
+            starsContainer.appendChild(star);
+        }
+
+        // Floating glitter particles
+        const particlesContainer = document.getElementById('particles-container');
+        const particleColors = [
+            'rgba(220,160,255,0.8)','rgba(255,180,230,0.8)','rgba(160,200,255,0.8)',
+            'rgba(255,220,160,0.8)','rgba(180,255,200,0.7)','rgba(255,255,180,0.8)'
+        ];
+        for(let i = 0; i < 18; i++) {
+            let p = document.createElement('div');
+            p.classList.add('particle');
+            let size = Math.random() * 5 + 2;
+            p.style.width = size + 'px';
+            p.style.height = size + 'px';
+            p.style.left = Math.random() * 100 + 'vw';
+            p.style.background = particleColors[Math.floor(Math.random() * particleColors.length)];
+            p.style.animationDuration = (Math.random() * 10 + 8) + 's';
+            p.style.animationDelay = (Math.random() * 8) + 's';
+            p.style.boxShadow = '0 0 6px ' + particleColors[Math.floor(Math.random() * particleColors.length)];
+            particlesContainer.appendChild(p);
+        }
+
+        // Sparkle burst effect
+        function spawnSparkles(x, y) {
+            const symbols = ['✨','💜','🌸','⭐','💫','🦋'];
+            for(let i = 0; i < 6; i++) {
+                let s = document.createElement('div');
+                s.classList.add('sparkle-burst');
+                s.innerText = symbols[i % symbols.length];
+                s.style.left = (x + (Math.random()-0.5)*120) + 'px';
+                s.style.top = (y + (Math.random()-0.5)*80) + 'px';
+                s.style.animationDelay = (i * 0.07) + 's';
+                document.body.appendChild(s);
+                setTimeout(() => s.remove(), 1000);
+            }
+        }
+
+        function checkAnswer() {
+            const input = document.getElementById('answer').value.trim().toLowerCase();
+            const errorMsg = document.getElementById('error-msg');
+            const inputBox = document.getElementById('answer');
+            const btn = document.querySelector('button');
+            const rect = btn.getBoundingClientRect();
+            spawnSparkles(rect.left + rect.width/2, rect.top + rect.height/2);
+
+            if (input === 'rabbit') {
+                window.location.href = "page2.html";
+            } else if (input === '') {
+                errorMsg.innerText = "Please type an answer! 🌸";
+                errorMsg.style.opacity = '1';
+            } else {
+                errorMsg.innerText = "Nope! Look at the hint! 🐰";
+                errorMsg.style.opacity = '1';
+                inputBox.style.transition = 'transform 0.08s';
+                let shakes = ['-7px','7px','-5px','5px','-3px','3px','0'];
+                shakes.forEach((v, i) => setTimeout(() => inputBox.style.transform = `translateX(${v})`, i * 90));
+            }
+        }
+
+        document.getElementById('answer').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') { checkAnswer(); }
+        });
+    </script>
+</body>
+</html>
